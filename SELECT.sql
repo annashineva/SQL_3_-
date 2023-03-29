@@ -61,21 +61,20 @@ INSERT INTO SingersAlbums VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4),(5, 
 
 INSERT INTO TracksCollections VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4),(5, 5, 5), (6, 6, 6),  (7, 7, 7),  (8, 8, 8),  (9, 9, 1),  (10, 10, 2),  (11, 11, 3),  (12, 12, 4),  (13, 13, 5),  (14, 14, 6),  (15, 15, 7),  (16, 16, 8);
 
-SELECT name, release_year FROM Albums
+SELECT album_name, release_year FROM Albums
 WHERE release_year >= '2018-01-01' and release_year <= '2018-12-31';
 
-SELECT name, duration FROM Tracks
+SELECT track_name, duration FROM Tracks
 where duration = (select max(duration) FROM Tracks);
 
-SELECT name FROM Tracks
+SELECT track_name FROM Tracks
 where duration >= 210;
 
-SELECT name FROM Collections
+SELECT collection_name FROM Collections
 WHERE release_year >= '2018-01-01' and release_year <= '2020-12-31';
 
-SELECT name FROM Singers
-where name not like '% %';
+SELECT singer_name FROM Singers
+where singer_name not like '% %';
 
-SELECT name FROM Tracks
-where name like '%My%' or name like '%my%' or name like '%мой%'or name like '%Мой%';
-
+SELECT track_name FROM Tracks
+where track_name like '%My%' or track_name like '%my%' or track_name like '%мой%'or track_name like '%Мой%';
