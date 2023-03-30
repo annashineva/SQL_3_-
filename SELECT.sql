@@ -61,20 +61,52 @@ INSERT INTO SingersAlbums VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4),(5, 
 
 INSERT INTO TracksCollections VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4),(5, 5, 5), (6, 6, 6),  (7, 7, 7),  (8, 8, 8),  (9, 9, 1),  (10, 10, 2),  (11, 11, 3),  (12, 12, 4),  (13, 13, 5),  (14, 14, 6),  (15, 15, 7),  (16, 16, 8);
 
-SELECT album_name, release_year FROM Albums
-WHERE release_year >= '2018-01-01' and release_year <= '2018-12-31';
+SELECT genre_name, COUNT(genre_id) FROM GenresSingers gs
+JOIN Genres g ON gs.genre_id = g.id
+GROUP BY genre_name
+ORDER BY COUNT DESC;
 
-SELECT track_name, duration FROM Tracks
-where duration = (select max(duration) FROM Tracks);
+SELECT COUNT(*) FROM Tracks t
+JOIN Albums a ON t.id = a.id
+WHERE a.release_year BETWEEN '2019-01-01' and '2020-12-31';
 
-SELECT track_name FROM Tracks
-where duration >= 210;
+SELECT album_name, AVG(duration) FROM Albums a
+JOIN Tracks t ON a.id = t.album_id
+GROUP BY album_name
+ORDER BY AVG(duration) DESC;
 
-SELECT collection_name FROM Collections
-WHERE release_year >= '2018-01-01' and release_year <= '2020-12-31';
+SELECT singer_name FROM Singers s
+JOIN SingersAlbums sa ON s.id = sa.album_id
+JOIN Albums a ON sa.album_id = a.id
+WHERE a.release_year <= '2019-12-31' OR a.release_year >= '2021-01-01';
 
-SELECT singer_name FROM Singers
-where singer_name not like '% %';
+SELECT collection_name FROM Collections c
+JOIN TracksCollections tc ON c.id = tc.track_id
+JOIN Tracks t ON tc.collection_id = t.id
+JOIN Albums a ON t.album_id = a.id
+JOIN SingersAlbums sa ON a.id = sa.singer_id
+JOIN Singers s ON sa.album_id = s.id
+WHERE singer_name = 'Queen';
 
-SELECT track_name FROM Tracks
-where track_name like '%My%' or track_name like '%my%' or track_name like '%мой%'or track_name like '%Мой%';
+SELECT album_name FROM Albums a
+JOIN SingersAlbums sa ON a.id = sa.singer_id
+JOIN Singers s ON sa.singer_id = s.id
+JOIN GenresSingers gs ON s.id = gs.singer_id
+GROUP BY album_name 
+HAVING count(gs.singer_id) > 1;
+
+SELECT track_name FROM Tracks t
+JOIN TracksCollections tc ON t.id = tc.collection_id
+WHERE t.id not in (SELECT track_id FROM TracksCollections tc);
+
+SELECT singer_name from Singers s
+JOIN SingersAlbums sa ON s.id = sa.album_id
+JOIN Albums a ON sa.album_id = a.id 
+JOIN Tracks t ON a.id = t.album_id
+WHERE duration = (SELECT min(duration) FROM Tracks);
+
+SELECT album_name FROM Albums a
+JOIN Tracks t ON a.id = t.album_id
+GROUP BY album_name
+HAVING min((SELECT COUNT(t.album_id) FROM Tracks t)) !=0;
+
